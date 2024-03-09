@@ -8,10 +8,11 @@ import jakarta.persistence.OneToMany;
 
 import java.io.Serializable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class wizard implements Serializable {
+public class Wizard implements Serializable {
     
     @Id
     private Integer id;
@@ -19,7 +20,7 @@ public class wizard implements Serializable {
     private String name;
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "owner")
-    private List<Artifact> artifacts;
+    private List<Artifact> artifacts = new ArrayList<>();
 
 
 
@@ -27,8 +28,6 @@ public class wizard implements Serializable {
 public Integer getId() {
         return id;
     }
-
-
 
     public void setId(Integer id) {
         this.id = id;
@@ -48,7 +47,7 @@ public Integer getId() {
 
 
 
-public wizard(){
+public Wizard(){
 }
 
 public List<Artifact> getArtifacts() {
@@ -62,4 +61,12 @@ public List<Artifact> getArtifacts() {
     }
 
 
+    public void addArtifact(Artifact artifact) {
+        artifact.setOwner(this);
+        this.artifacts.add(artifact);
+    }
+
+    public Integer getNumberOfArtifacts() {
+    return this.artifacts.size();
+    }
 }
