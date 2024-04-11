@@ -10,7 +10,7 @@ public record ArtifactDto(String id,
                           String name,
                           @NotEmpty(message = "description is required.")
                           String description,
-                          @NotEmpty(message = "imageUrl is required.")
+                          @NotEmpty(message = "imageurl is required.")
                           String imageUrl,
                           WizardDto owner) {
 }

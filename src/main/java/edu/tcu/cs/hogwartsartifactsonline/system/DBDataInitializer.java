@@ -2,6 +2,8 @@ package edu.tcu.cs.hogwartsartifactsonline.system;
 
 import edu.tcu.cs.hogwartsartifactsonline.artifact.Artifact;
 import edu.tcu.cs.hogwartsartifactsonline.artifact.ArtifactRepository;
+import edu.tcu.cs.hogwartsartifactsonline.hogwartsuser.HogwartsUser;
+import edu.tcu.cs.hogwartsartifactsonline.hogwartsuser.UserService;
 import edu.tcu.cs.hogwartsartifactsonline.wizard.Wizard;
 import edu.tcu.cs.hogwartsartifactsonline.wizard.WizardRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -14,9 +16,13 @@ public class DBDataInitializer implements CommandLineRunner {
 
     private final WizardRepository wizardRepository;
 
-    public DBDataInitializer(ArtifactRepository artifactRepository, WizardRepository wizardRepository) {
+    private final UserService userService;
+
+
+    public DBDataInitializer(ArtifactRepository artifactRepository, WizardRepository wizardRepository, UserService userService) {
         this.artifactRepository = artifactRepository;
         this.wizardRepository = wizardRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -36,7 +42,7 @@ public class DBDataInitializer implements CommandLineRunner {
         Artifact a3 = new Artifact();
         a3.setId("1250808601744904193");
         a3.setName("Elder Wand");
-        a3.setDescription("The Elder Wand, known throughout history as the Deathstick or the Wand of Destiny, is an extremely powerful wand made of elder wood with a core of Thestral tail hair.");
+        a3.setDescription("The Eler Wand, known throughout history as the Deathstick or the Wand of Destiny, is an extremely powerful wand made of elder wood with a core of Thestral tail hair.");
         a3.setImageUrl("ImageUrl");
 
         Artifact a4 = new Artifact();
@@ -74,11 +80,37 @@ public class DBDataInitializer implements CommandLineRunner {
         w3.setName("Neville Longbottom");
         w3.addArtifact(a5);
 
-        this.wizardRepository.save(w1);
-        this.wizardRepository.save(w2);
-        this.wizardRepository.save(w3);
+        wizardRepository.save(w1);
+        wizardRepository.save(w2);
+        wizardRepository.save(w3);
 
-        // Since a6 doesn't have an owner yet, we need to save it explicitly here.
-        this.artifactRepository.save(a6);
+        artifactRepository.save(a6); //Since a6 doesn't have an owner yet, we need to save it explicitly here.
+
+        //Create some users
+        HogwartsUser u1 = new HogwartsUser();
+        u1.setId(1);
+        u1.setUsername("john");
+        u1.setPassword("123456");
+        u1.setEnabled(true);
+        u1.setRoles("admin user");
+
+        HogwartsUser u2 = new HogwartsUser();
+        u2.setId(2);
+        u2.setUsername("eric");
+        u2.setPassword("654321");
+        u2.setEnabled(true);
+        u2.setRoles("user");
+
+        HogwartsUser u3 = new HogwartsUser();
+        u3.setId(3);
+        u3.setUsername("tom");
+        u3.setPassword("qwerty");
+        u3.setEnabled(false);
+        u3.setRoles("user");
+
+        this.userService.save(u1);
+        this.userService.save(u2);
+        this.userService.save(u3);
     }
+
 }
