@@ -34,13 +34,14 @@ public class UserService implements UserDetailsService {
     }
 
     public HogwartsUser save(HogwartsUser newHogwartsUser) {
-        //We must to encode plain text password before saving to the DB! TODO
+        // We NEED to encode plain text password before saving to the DB! TODO
         newHogwartsUser.setPassword(this.passwordEncoder.encode(newHogwartsUser.getPassword()));
         return this.userRepository.save(newHogwartsUser);
     }
 
     /**
-     * We are not using this update to change user password
+     * We are not using this update to change user password.
+     *
      * @param userId
      * @param update
      * @return

@@ -54,7 +54,7 @@ public class IdWorker {
         this.workerId = workerId;
         this.datacenterId = datacenterId;
     }
-    // Have to convert this long id into string id
+
     public synchronized long nextId() {
         long timestamp = timeGen();
         if (timestamp < lastTimestamp) {

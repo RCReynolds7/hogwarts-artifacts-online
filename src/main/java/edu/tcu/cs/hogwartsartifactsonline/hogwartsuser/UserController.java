@@ -17,9 +17,9 @@ public class UserController {
 
     private final UserService userService;
 
-    private final UserDtoToUserConverter userDtoToUserConverter; //Convert userDto to user.
+    private final UserDtoToUserConverter userDtoToUserConverter; // Convert userDto to user.
 
-    private final UserToUserDtoConverter userToUserDtoConverter; //Convert user to userDto.
+    private final UserToUserDtoConverter userToUserDtoConverter; // Convert user to userDto.
 
 
     public UserController(UserService userService, UserDtoToUserConverter userDtoToUserConverter, UserToUserDtoConverter userToUserDtoConverter) {
@@ -32,12 +32,12 @@ public class UserController {
     public Result findAllUsers() {
         List<HogwartsUser> foundHogwartsUsers = this.userService.findAll();
 
-        //convert foundUsers to a list of UserDtos.
+        // Convert foundUsers to a list of UserDtos.
         List<UserDto> userDtos = foundHogwartsUsers.stream()
                 .map(this.userToUserDtoConverter::convert)
                 .collect(Collectors.toList());
 
-        //Note that UserDto does not contain password field.
+        // Note that UserDto does not contain password field.
         return new Result(true, StatusCode.SUCCESS, "Find All Success", userDtos);
     }
 
@@ -49,7 +49,8 @@ public class UserController {
     }
 
     /**
-     * We are not using UserDto, but User, since we require password
+     * We are not using UserDto, but User, since we require password.
+     *
      * @param newHogwartsUser
      * @return
      */
@@ -60,7 +61,7 @@ public class UserController {
         return new Result(true, StatusCode.SUCCESS, "Add Success", savedUserDto);
     }
 
-    //We are not using this to update password, need another changePassword method in this class.
+    // We are not using this to update password, need another changePassword method in this class.
     @PutMapping("/{userId}")
     public Result updateUser(@PathVariable Integer userId, @Valid @RequestBody UserDto userDto) {
         HogwartsUser update = this.userDtoToUserConverter.convert(userDto);

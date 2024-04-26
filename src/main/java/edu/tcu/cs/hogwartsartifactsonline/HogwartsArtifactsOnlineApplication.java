@@ -8,27 +8,13 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class HogwartsArtifactsOnlineApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(HogwartsArtifactsOnlineApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(HogwartsArtifactsOnlineApplication.class, args);
+    }
 
-	@Bean
-	public IdWorker idWorker() {
-		return new IdWorker(1, 1); // Create a bean for IdWorker
-	}
+    @Bean
+    public IdWorker idWorker(){
+        return new IdWorker(1, 1);
+    }
 
 }
-
-/*package edu.tcu.cs.hogwartsartifactsonline;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class HogwartsArtifactsOnlineApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(HogwartsArtifactsOnlineApplication.class, args);
-	}
-
-}*/

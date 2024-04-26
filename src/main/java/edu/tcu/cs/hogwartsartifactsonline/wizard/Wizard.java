@@ -4,13 +4,12 @@ import edu.tcu.cs.hogwartsartifactsonline.artifact.Artifact;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class Wizard implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -21,9 +20,10 @@ public class Wizard implements Serializable {
     private List<Artifact> artifacts = new ArrayList<>();
 
 
+    public Wizard() {
+    }
 
-
-public Integer getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -31,33 +31,21 @@ public Integer getId() {
         this.id = id;
     }
 
-
-
     public String getName() {
         return name;
     }
-
-
 
     public void setName(String name) {
         this.name = name;
     }
 
-
-
-public Wizard(){
-}
-
-public List<Artifact> getArtifacts() {
+    public List<Artifact> getArtifacts() {
         return artifacts;
     }
-
-
 
     public void setArtifacts(List<Artifact> artifacts) {
         this.artifacts = artifacts;
     }
-
 
     public void addArtifact(Artifact artifact) {
         artifact.setOwner(this);
@@ -65,7 +53,7 @@ public List<Artifact> getArtifacts() {
     }
 
     public Integer getNumberOfArtifacts() {
-    return this.artifacts.size();
+        return this.artifacts.size();
     }
 
     public void removeAllArtifacts() {
@@ -74,8 +62,9 @@ public List<Artifact> getArtifacts() {
     }
 
     public void removeArtifact(Artifact artifactToBeAssigned) {
-        //Remove artifact owner
+        // Remove artifact owner.
         artifactToBeAssigned.setOwner(null);
         this.artifacts.remove(artifactToBeAssigned);
     }
+
 }

@@ -12,11 +12,15 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import java.io.IOException;
 
 /**
- *This class handles unsuccessful JWT authentication.
+ * This class handles unsuccessful JWT authentication.
  */
 @Component
 public class CustomBearerTokenAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
+    /*
+     * Here we've injected the DefaultHandlerExceptionResolver and delegated the handler to this resolver.
+     * This security exception can now be handled with controller advice with an exception handler method.
+     */
     private final HandlerExceptionResolver resolver;
 
 

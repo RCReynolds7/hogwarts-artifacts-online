@@ -32,7 +32,7 @@ public class WizardController {
     public Result findAllWizards() {
         List<Wizard> foundWizards = this.wizardService.findAll();
 
-        //Convert foundWizards to a list of WizardDto
+        // Convert foundWizards to a list of WizardDtos.
         List<WizardDto> wizardDtos = foundWizards.stream()
                 .map(this.wizardToWizardDtoConverter::convert)
                 .collect(Collectors.toList());

@@ -24,10 +24,10 @@ public class JwtProvider {
         Instant now = Instant.now();
         long expiresIn = 2; // 2 hours
 
-        //Prepare a claim called authorities
+        // Prepare a claim called authorities.
         String authorities = authentication.getAuthorities().stream()
                 .map(grantedAuthority -> grantedAuthority.getAuthority())
-                .collect(Collectors.joining(" "));//Needs to be space-delimited
+                .collect(Collectors.joining(" "));// MUST BE space-delimited.
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
