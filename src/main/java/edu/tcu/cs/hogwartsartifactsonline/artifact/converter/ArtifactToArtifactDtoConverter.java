@@ -11,21 +11,20 @@ public class ArtifactToArtifactDtoConverter implements Converter<Artifact, Artif
 
     private final WizardToWizardDtoConverter wizardToWizardDtoConverter;
 
-
     public ArtifactToArtifactDtoConverter(WizardToWizardDtoConverter wizardToWizardDtoConverter) {
         this.wizardToWizardDtoConverter = wizardToWizardDtoConverter;
     }
+
     @Override
     public ArtifactDto convert(Artifact source) {
         ArtifactDto artifactDto = new ArtifactDto(source.getId(),
-                source.getName(),
-                source.getDescription(),
-                source.getImageUrl(),
-                source.getOwner() != null ?
-                        this.wizardToWizardDtoConverter.convert(source.getOwner()) :
-                        null);
+                                                    source.getName(),
+                                                    source.getDescription(),
+                                                    source.getImageUrl(),
+                                                    source.getOwner() != null
+                                                            ? this.wizardToWizardDtoConverter.convert(source.getOwner())
+                                                            : null);
         return artifactDto;
     }
 
 }
-

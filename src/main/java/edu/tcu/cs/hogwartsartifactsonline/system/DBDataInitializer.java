@@ -7,9 +7,11 @@ import edu.tcu.cs.hogwartsartifactsonline.hogwartsuser.UserService;
 import edu.tcu.cs.hogwartsartifactsonline.wizard.Wizard;
 import edu.tcu.cs.hogwartsartifactsonline.wizard.WizardRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("dev")
 public class DBDataInitializer implements CommandLineRunner {
 
     private final ArtifactRepository artifactRepository;
@@ -84,9 +86,9 @@ public class DBDataInitializer implements CommandLineRunner {
         wizardRepository.save(w2);
         wizardRepository.save(w3);
 
-        artifactRepository.save(a6); //Since a6 doesn't have an owner yet, we need to save it explicitly here.
+        artifactRepository.save(a6); // Since a6 doesn't have an owner yet, we need to save it explicitly here.
 
-        //Create some users
+        // Create some users.
         HogwartsUser u1 = new HogwartsUser();
         u1.setId(1);
         u1.setUsername("john");

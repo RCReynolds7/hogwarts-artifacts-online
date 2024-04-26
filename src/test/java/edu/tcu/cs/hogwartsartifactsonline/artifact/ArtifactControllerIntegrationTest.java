@@ -7,11 +7,6 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
-
-
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +15,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -30,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @DisplayName("Integration tests for Artifact API endpoints")
 @Tag("integration")
+@ActiveProfiles(value = "dev")
 class ArtifactControllerIntegrationTest {
 
     @Autowired
@@ -46,8 +51,8 @@ class ArtifactControllerIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-            //ResultActions resultActions = this.mockMvc.perform(post(this.baseUrl + "/auth/login").header(HttpHeaders.AUTHORIZATION,
-            //"Basic " + Base64Utils.encodeToString("john:123456".getBytes())));
+//        ResultActions resultActions = this.mockMvc.perform(post(this.baseUrl + "/auth/login").header(HttpHeaders.AUTHORIZATION,
+//                "Basic " + Base64Utils.encodeToString("john:123456".getBytes())));
         ResultActions resultActions = this.mockMvc.perform(post(this.baseUrl + "/users/login").with(httpBasic("john", "123456"))); // httpBasic() is from spring-security-test.
         MvcResult mvcResult = resultActions.andDo(print()).andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
@@ -58,13 +63,13 @@ class ArtifactControllerIntegrationTest {
     @Test
     @DisplayName("Check findAllArtifacts (GET)")
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
-        //Reset H2 database before calling this test case.
+        // Reset H2 database before calling this test case.
     void testFindAllArtifactsSuccess() throws Exception {
         this.mockMvc.perform(get(this.baseUrl + "/artifacts").accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Find All Success"))
-                .andExpect(jsonPath("$.data", Matchers.hasSize(6)));
+                .andExpect(jsonPath("$.data.content", Matchers.hasSize(6)));
     }
 
     @Test
@@ -111,7 +116,7 @@ class ArtifactControllerIntegrationTest {
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Find All Success"))
-                .andExpect(jsonPath("$.data", Matchers.hasSize(7)));
+                .andExpect(jsonPath("$.data.content", Matchers.hasSize(7)));
     }
 
     @Test
@@ -119,9 +124,9 @@ class ArtifactControllerIntegrationTest {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void testAddArtifactErrorWithInvalidInput() throws Exception {
         Artifact a = new Artifact();
-        a.setName(""); //Name is not provided.
-        a.setDescription(""); //Description is not provided.
-        a.setImageUrl(""); //mageUrl is not provided.
+        a.setName(""); // Name is not provided.
+        a.setDescription(""); // Description is not provided.
+        a.setImageUrl(""); // ImageUrl is not provided.
 
         String json = this.objectMapper.writeValueAsString(a);
 
@@ -136,7 +141,7 @@ class ArtifactControllerIntegrationTest {
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Find All Success"))
-                .andExpect(jsonPath("$.data", Matchers.hasSize(6)));
+                .andExpect(jsonPath("$.data.content", Matchers.hasSize(6)));
     }
 
     @Test
@@ -183,9 +188,9 @@ class ArtifactControllerIntegrationTest {
     void testUpdateArtifactErrorWithInvalidInput() throws Exception {
         Artifact a = new Artifact();
         a.setId("1250808601744904191"); // Valid id
-        a.setName(""); //Updated name is empty.
-        a.setDescription(""); //Updated description is empty.
-        a.setImageUrl(""); //pdated imageUrl is empty.
+        a.setName(""); // Updated name is empty.
+        a.setDescription(""); // Updated description is empty.
+        a.setImageUrl(""); // Updated imageUrl is empty.
 
         String json = this.objectMapper.writeValueAsString(a);
 
@@ -226,6 +231,47 @@ class ArtifactControllerIntegrationTest {
                 .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
                 .andExpect(jsonPath("$.message").value("Could not find artifact with Id 1250808601744904199 :("))
                 .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    void testFindArtifactsByDescription() throws Exception {
+        // Given
+        Map<String, String> searchCriteria = new HashMap<>();
+        searchCriteria.put("description", "Hogwarts");
+        String json = this.objectMapper.writeValueAsString(searchCriteria);
+
+        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("page", "0");
+        requestParams.add("size", "2");
+        requestParams.add("sort", "name,asc");
+
+        // When and then
+        this.mockMvc.perform(post(this.baseUrl + "/artifacts/search").contentType(MediaType.APPLICATION_JSON).content(json).params(requestParams).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Search Success"))
+                .andExpect(jsonPath("$.data.content", Matchers.hasSize(2)));
+    }
+
+    @Test
+    void testFindArtifactsByNameAndDescription() throws Exception {
+        // Given
+        Map<String, String> searchCriteria = new HashMap<>();
+        searchCriteria.put("name", "Sword");
+        searchCriteria.put("description", "Hogwarts");
+        String json = this.objectMapper.writeValueAsString(searchCriteria);
+
+        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("page", "0");
+        requestParams.add("size", "2");
+        requestParams.add("sort", "name,asc");
+
+        // When and then
+        this.mockMvc.perform(post(this.baseUrl + "/artifacts/search").contentType(MediaType.APPLICATION_JSON).content(json).params(requestParams).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Search Success"))
+                .andExpect(jsonPath("$.data.content", Matchers.hasSize(1)));
     }
 
 }

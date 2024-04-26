@@ -12,7 +12,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import java.io.IOException;
 
 /**
- *This class handles unsuccessful JWT authorization.
+ * This class handles unsuccessful JWT authorization.
  */
 @Component
 public class CustomBearerTokenAccessDeniedHandler implements AccessDeniedHandler {
